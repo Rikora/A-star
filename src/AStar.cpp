@@ -1,4 +1,8 @@
 #include "AStar.hpp"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <algorithm>
 
 namespace pf
 {
@@ -9,6 +13,23 @@ namespace pf
 
 	void AStar::loadMap(const std::string& fileName)
 	{
+		std::ifstream file(fileName);
+		
+		if (file.is_open())
+		{
+			std::string line;
+			while (std::getline(file, line))
+			{
+				line.erase(std::remove(line.begin(), line.end(), ','), line.end());
+
+				for (size_t i = 0; i < line.size(); ++i)
+				{
+					m_grid.push_back(line[i] - 48);
+				}
+			}
+
+			file.close();
+		}
 	}
 
 	bool AStar::isValid(const Vec2i& pos)

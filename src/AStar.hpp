@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Vec2i.hpp"
 #include <set>
 #include <vector>
+#include "Vec2i.hpp"
 
 namespace pf
 {
@@ -20,7 +20,7 @@ namespace pf
 	};
 
 	// Required for std::set
-	bool operator< (const Node& a, const Node& b) { return a.f < b.f; }
+	inline bool operator< (const Node& a, const Node& b) { return a.f < b.f; }
 
 	class AStar
 	{
