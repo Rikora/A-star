@@ -6,7 +6,7 @@
 namespace pf
 {
 	AStar::AStar() : 
-	m_weightFactor(1),
+	m_weight(1),
 	m_dimensions(0, 0),
 	m_startPos(0, 0),
 	m_targetPos(0, 0),
@@ -16,17 +16,12 @@ namespace pf
 		m_directions = { { -1, 0 }, { 1, 0 }, { 0, 1 }, { 0, -1 } };
 	}
 
-	int AStar::findPath(const Vec2i& startPos, const Vec2i& targetPos)
+	std::vector<Vec2i> AStar::findPath(const Vec2i& startPos, const Vec2i& targetPos, int weight)
 	{
+		// Init variables
 		m_startPos = startPos;
 		m_targetPos = targetPos;
-
-		if (m_grid.empty() || m_startPos == m_targetPos)
-		{
-			return -1;
-		}
-
-		// Init lists
+		m_weight = weight;
 		m_cameFrom.resize(m_size);
 		m_closedList.resize(m_size, false);
 
@@ -43,10 +38,10 @@ namespace pf
 			auto curr_it = *m_openList.begin();
 			currentPos = curr_it.pos;
 
-			// If the current node is the target node, the search is complete
+			// If the current node is the target node, we can start building the path
 			if (currentPos == m_targetPos)
 			{
-				//return tracePath(cameFrom, pOutBuffer, nOutBufferSize);
+				break;
 			}
 
 			// Remove the found node from the open list and then add it to the closed list
@@ -78,8 +73,26 @@ namespace pf
 			}
 		}
 
-		// If we could not find the path
-		return -1;
+		return buildPath();
+	}
+
+	std::vector<Vec2i> AStar::buildPath() const
+	{
+		std::vector<Vec2i> path;
+		auto currentPos = m_targetPos;
+		auto currentIndex = convertTo1D(currentPos);
+
+		// Build the path 
+		while (!(m_cameFrom[currentIndex].parent == currentPos))
+		{
+			path.push_back(currentPos);
+			currentPos = m_cameFrom[currentIndex].parent;
+			currentIndex = convertTo1D(currentPos);
+		}
+
+		std::reverse(path.begin(), path.end());
+
+		return path;
 	}
 
 	void AStar::loadMap(const std::string& fileName)
@@ -119,26 +132,36 @@ namespace pf
 		}
 	}
 
-	bool AStar::isValid(const Vec2i& pos)
+	bool AStar::isValid(const Vec2i& pos) const
 	{
 		return (pos.x >= 0) && (pos.x < m_dimensions.x) && 
 			   (pos.y >= 0) && (pos.y < m_dimensions.y);
 	}
 
-	bool AStar::isBlocked(int index)
+	bool AStar::isBlocked(int index) const
 	{
 		return (m_grid[index] == 0);
 	}
 
 	// Manhattan distance for now...
-	uint AStar::computeHeuristic(const Vec2i& pos)
+	uint AStar::computeHeuristic(const Vec2i& pos) const
 	{
-		return static_cast<uint>(m_weightFactor * (abs(pos.x - m_targetPos.x) + abs(pos.y - m_targetPos.y)));
+		return static_cast<uint>(m_weight * (abs(pos.x - m_targetPos.x) + abs(pos.y - m_targetPos.y)));
 	}
 
 	// Returns a 1D index based on a 2D coordinate using row-major layout
-	int AStar::convertTo1D(const Vec2i& pos)
+	int AStar::convertTo1D(const Vec2i& pos) const
 	{
 		return (pos.y * m_dimensions.x) + pos.x;
+	}
+
+	void AStar::setHeuristicWeight(int weight)
+	{
+		m_weight = weight;
+	}
+
+	int AStar::getHeuristicWeight() const
+	{
+		return m_weight;
 	}
 }

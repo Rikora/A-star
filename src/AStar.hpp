@@ -29,16 +29,19 @@ namespace pf
 	public:
 		AStar();
 
-		int findPath(const Vec2i& startPos, const Vec2i& targetPos);
+		std::vector<Vec2i> findPath(const Vec2i& startPos, const Vec2i& targetPos, int weight = 1); // TODO: add heuristic function parameter
 		void loadMap(const std::string& fileName);
 
 	private:
-		bool isValid(const Vec2i& pos);
-		bool isBlocked(int index);
-		uint computeHeuristic(const Vec2i& pos); // Change this later...
-		int convertTo1D(const Vec2i& pos);
+		std::vector<Vec2i> buildPath() const;
+		bool isValid(const Vec2i& pos) const;
+		bool isBlocked(int index) const;
+		uint computeHeuristic(const Vec2i& pos) const; // Change this later...
+		int convertTo1D(const Vec2i& pos) const;
+		void setHeuristicWeight(int weight);
+		int getHeuristicWeight() const;
 
-		int m_weightFactor;
+		int m_weight;
 		int m_size;
 		Vec2i m_dimensions;
 		Vec2i m_startPos;
