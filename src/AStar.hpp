@@ -31,6 +31,8 @@ namespace pf
 
 		std::vector<Vec2i> findPath(const Vec2i& startPos, const Vec2i& targetPos, int weight = 1); // TODO: add heuristic function parameter
 		void loadMap(const std::string& fileName);
+		void setHeuristicWeight(int weight);
+		int getHeuristicWeight() const;
 
 	private:
 		std::vector<Vec2i> buildPath() const;
@@ -38,8 +40,6 @@ namespace pf
 		bool isBlocked(int index) const;
 		uint computeHeuristic(const Vec2i& pos) const; // Change this later...
 		int convertTo1D(const Vec2i& pos) const;
-		void setHeuristicWeight(int weight);
-		int getHeuristicWeight() const;
 
 		int m_weight;
 		int m_size;
