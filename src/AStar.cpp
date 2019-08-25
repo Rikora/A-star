@@ -20,14 +20,30 @@ namespace pf
 			std::string line;
 			while (std::getline(file, line))
 			{
-				line.erase(std::remove(line.begin(), line.end(), ','), line.end());
-
-				for (size_t i = 0; i < line.size(); ++i)
+				if (line.find('w') != std::string::npos)
 				{
-					m_grid.push_back(line[i] - 48);
+					line.erase(std::remove_if(line.begin(), line.end(), 
+						[](unsigned char c) { return (c == 'w' || c == ':') ? true : false; }), line.end());
+					m_dimensions.x = line[0] - 48;
+				}
+				else if (line.find('h') != std::string::npos)
+				{
+					line.erase(std::remove_if(line.begin(), line.end(),
+						[](unsigned char c) { return (c == 'h' || c == ':') ? true : false; }), line.end());
+					m_dimensions.y = line[0] - 48;
+				}
+				else
+				{
+					line.erase(std::remove(line.begin(), line.end(), ','), line.end());
+
+					for (const auto& c : line)
+					{
+						m_grid.push_back(c - 48);
+					}
 				}
 			}
 
+			m_size = m_dimensions.x * m_dimensions.y;
 			file.close();
 		}
 	}
