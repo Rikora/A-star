@@ -6,10 +6,10 @@ int main()
 	pf::AStar astar;
 
 	astar.loadMap("maps/map01.txt");
-	//astar.setDiagonalMovement(true);
-	auto v = astar.findPath({0, 0}, {4, 3}, pf::heuristic::manhattan, 1);
+	astar.setDiagonalMovement(true);
+	auto path = astar.findPath(pf::Vec2i(0, 0), pf::Vec2i(10, 7), pf::heuristic::euclidean, 1);
 
-	for (const auto& coord : v) 
+	for (const auto& coord : path) 
 	{
 		std::cout << coord.x << "," << coord.y << "\n";
 	}
