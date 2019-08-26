@@ -2,11 +2,13 @@
 
 #include <set>
 #include <vector>
+#include <functional>
 #include "Vec2i.hpp"
 
 namespace pf
 {
 	using uint = unsigned int;
+	using HeuristicFunction = std::function<uint(const Vec2i&, const Vec2i&, int)>;
 
 	struct Node
 	{
@@ -29,7 +31,7 @@ namespace pf
 	public:
 		AStar();
 
-		std::vector<Vec2i> findPath(const Vec2i& startPos, const Vec2i& targetPos, int weight = 1); // TODO: add heuristic function parameter
+		std::vector<Vec2i> findPath(const Vec2i& startPos, const Vec2i& targetPos, HeuristicFunction heuristicFunc, int weight = 1);
 		void loadMap(const std::string& fileName);
 		void setHeuristicWeight(int weight);
 		int getHeuristicWeight() const;
@@ -38,7 +40,6 @@ namespace pf
 		std::vector<Vec2i> buildPath() const;
 		bool isValid(const Vec2i& pos) const;
 		bool isBlocked(int index) const;
-		uint computeHeuristic(const Vec2i& pos) const; // Change this later...
 		int convertTo1D(const Vec2i& pos) const;
 
 		int m_weight;
@@ -51,5 +52,12 @@ namespace pf
 		std::vector<Node> m_cameFrom;
 		std::vector<int> m_grid;
 		std::vector<Vec2i> m_directions;
+		HeuristicFunction m_heuristic;
 	};
+
+	namespace heuristic
+	{
+		uint manhattan(const Vec2i& v1, const Vec2i& v2, int weight);
+		uint euclidean(const Vec2i& v1, const Vec2i& v2, int weight);
+	}
 }

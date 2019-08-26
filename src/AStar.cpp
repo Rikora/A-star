@@ -3,6 +3,8 @@
 #include <string>
 #include <algorithm>
 
+using namespace std::placeholders;
+
 namespace pf
 {
 	AStar::AStar() : 
@@ -16,12 +18,13 @@ namespace pf
 		m_directions = { { -1, 0 }, { 1, 0 }, { 0, 1 }, { 0, -1 } };
 	}
 
-	std::vector<Vec2i> AStar::findPath(const Vec2i& startPos, const Vec2i& targetPos, int weight)
+	std::vector<Vec2i> AStar::findPath(const Vec2i& startPos, const Vec2i& targetPos, HeuristicFunction heuristicFunc, int weight)
 	{
 		// Init variables
 		m_startPos = startPos;
 		m_targetPos = targetPos;
 		m_weight = weight;
+		m_heuristic = std::bind(heuristicFunc, _1, _2, _3); // TODO: add more neighbors for diagonal movement!
 		m_cameFrom.resize(m_size);
 		m_closedList.resize(m_size, false);
 
@@ -38,7 +41,7 @@ namespace pf
 			auto curr_it = *m_openList.begin();
 			currentPos = curr_it.pos;
 
-			// If the current node is the target node, we can start building the path
+			// If the current position is the target position, we can start building the path
 			if (currentPos == m_targetPos)
 			{
 				break;
@@ -61,7 +64,7 @@ namespace pf
 				}
 
 				gNew = m_cameFrom[convertTo1D(currentPos)].g + 1;
-				hNew = computeHeuristic(neighborPos);
+				hNew = m_heuristic(neighborPos, m_targetPos, m_weight);
 				fNew = gNew + hNew;
 
 				// If the node is not in the open list or the new f value is better
@@ -132,6 +135,16 @@ namespace pf
 		}
 	}
 
+	void AStar::setHeuristicWeight(int weight)
+	{
+		m_weight = weight;
+	}
+
+	int AStar::getHeuristicWeight() const
+	{
+		return m_weight;
+	}
+
 	bool AStar::isValid(const Vec2i& pos) const
 	{
 		return (pos.x >= 0) && (pos.x < m_dimensions.x) && 
@@ -143,25 +156,22 @@ namespace pf
 		return (m_grid[index] == 0);
 	}
 
-	// Manhattan distance for now...
-	uint AStar::computeHeuristic(const Vec2i& pos) const
-	{
-		return static_cast<uint>(m_weight * (abs(pos.x - m_targetPos.x) + abs(pos.y - m_targetPos.y)));
-	}
-
 	// Returns a 1D index based on a 2D coordinate using row-major layout
 	int AStar::convertTo1D(const Vec2i& pos) const
 	{
 		return (pos.y * m_dimensions.x) + pos.x;
 	}
 
-	void AStar::setHeuristicWeight(int weight)
+	uint heuristic::manhattan(const Vec2i& v1, const Vec2i& v2, int weight)
 	{
-		m_weight = weight;
+		const auto delta = Vec2i::getDelta(v1, v2);
+		return static_cast<uint>(weight * (delta.x + delta.y));
 	}
 
-	int AStar::getHeuristicWeight() const
+	uint heuristic::euclidean(const Vec2i& v1, const Vec2i& v2, int weight)
 	{
-		return m_weight;
+		const auto delta = Vec2i::getDelta(v1, v2);
+		return static_cast<uint>(weight * sqrt((delta.x * delta.x) + (delta.y * delta.y)));
 	}
 }
+
