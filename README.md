@@ -32,4 +32,4 @@ int main()
 
 ## License
 
-This library is licensed under the MIT License, see LICENSE for more information.
+This project is licensed under the MIT License, see LICENSE for more information.
