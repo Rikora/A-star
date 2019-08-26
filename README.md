@@ -13,7 +13,7 @@ int main()
 
     astar.loadMap("maps/map01.txt");
     astar.setDiagonalMovement(true);
-    auto path = astar.findPath(pf::Vec2i(0, 0), pf::Vec2i(10, 7), pf::heuristic::euclidean, 1);
+    auto path = astar.findPath(pf::Vec2i(0, 0), pf::Vec2i(10, 7), pf::heuristic::euclidean, 10);
 
     for (const auto& coord : path) 
     {
@@ -26,6 +26,9 @@ int main()
 ```
 
 ## Resources
+
+* [A* algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
+* [daancode](https://github.com/daancode/a-star)
 
 ## License
 
