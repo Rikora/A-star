@@ -6,6 +6,7 @@ int main()
 	pf::AStar astar;
 
 	astar.loadMap("maps/map01.txt");
+	//astar.setDiagonalMovement(true);
 	auto v = astar.findPath({0, 0}, {4, 3}, pf::heuristic::manhattan, 1);
 
 	for (const auto& coord : v) 

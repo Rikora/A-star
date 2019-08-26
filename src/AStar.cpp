@@ -12,10 +12,11 @@ namespace pf
 	m_dimensions(0, 0),
 	m_startPos(0, 0),
 	m_targetPos(0, 0),
-	m_size(0)
+	m_size(0),
+	m_nrOfDirections(4)
 	{
-		// No diagonal movement at this point
-		m_directions = { { -1, 0 }, { 1, 0 }, { 0, 1 }, { 0, -1 } };
+		m_directions = { { -1, 0 }, { 1, 0 }, { 0, 1 }, { 0, -1 },
+						 { -1, -1 }, { 1, 1 }, { -1, 1 }, { 1, -1 } };
 	}
 
 	std::vector<Vec2i> AStar::findPath(const Vec2i& startPos, const Vec2i& targetPos, HeuristicFunction heuristicFunc, int weight)
@@ -24,7 +25,7 @@ namespace pf
 		m_startPos = startPos;
 		m_targetPos = targetPos;
 		m_weight = weight;
-		m_heuristic = std::bind(heuristicFunc, _1, _2, _3); // TODO: add more neighbors for diagonal movement!
+		m_heuristic = std::bind(heuristicFunc, _1, _2, _3);
 		m_cameFrom.resize(m_size);
 		m_closedList.resize(m_size, false);
 
@@ -52,9 +53,9 @@ namespace pf
 			m_closedList[convertTo1D(currentPos)] = true;
 
 			// Check the neighbors of the current node
-			for (const auto& dir : m_directions)
+			for (uint i = 0; i < m_nrOfDirections; ++i)
 			{
-				const auto neighborPos = currentPos + dir;
+				const auto neighborPos = currentPos + m_directions[i];
 				const auto neighborIndex = convertTo1D(neighborPos);
 
 				// If the node is not valid or can't be passed or the node is already found
@@ -135,14 +136,9 @@ namespace pf
 		}
 	}
 
-	void AStar::setHeuristicWeight(int weight)
+	void AStar::setDiagonalMovement(bool enable)
 	{
-		m_weight = weight;
-	}
-
-	int AStar::getHeuristicWeight() const
-	{
-		return m_weight;
+		m_nrOfDirections = (enable) ? 8 : 4;
 	}
 
 	bool AStar::isValid(const Vec2i& pos) const

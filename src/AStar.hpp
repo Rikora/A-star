@@ -33,8 +33,7 @@ namespace pf
 
 		std::vector<Vec2i> findPath(const Vec2i& startPos, const Vec2i& targetPos, HeuristicFunction heuristicFunc, int weight = 1);
 		void loadMap(const std::string& fileName);
-		void setHeuristicWeight(int weight);
-		int getHeuristicWeight() const;
+		void setDiagonalMovement(bool enable);
 
 	private:
 		std::vector<Vec2i> buildPath() const;
@@ -44,6 +43,7 @@ namespace pf
 
 		int m_weight;
 		int m_size;
+		uint m_nrOfDirections;
 		Vec2i m_dimensions;
 		Vec2i m_startPos;
 		Vec2i m_targetPos;
