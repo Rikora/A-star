@@ -7,7 +7,7 @@ int main()
 
 	astar.loadMap("maps/map01.txt");
 	astar.setDiagonalMovement(true);
-	auto path = astar.findPath(pf::Vec2i(0, 0), pf::Vec2i(10, 7), pf::heuristic::euclidean, 1);
+	auto path = astar.findPath(pf::Vec2i(0, 0), pf::Vec2i(10, 7), pf::heuristic::euclidean, 10);
 
 	for (const auto& coord : path) 
 	{
