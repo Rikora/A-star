@@ -21,7 +21,6 @@ namespace pf
 
 	std::vector<Vec2i> AStar::findPath(const Vec2i& startPos, const Vec2i& targetPos, HeuristicFunction heuristicFunc, int weight)
 	{
-		// Init variables
 		m_startPos = startPos;
 		m_targetPos = targetPos;
 		m_weight = weight;
@@ -29,7 +28,6 @@ namespace pf
 		m_cameFrom.resize(m_size);
 		m_closedList.resize(m_size, false);
 
-		// Add the start node to the lists
 		m_cameFrom[convertTo1D(m_startPos)].parent = m_startPos;
 		m_openList.insert(Node(m_startPos, 0));
 
@@ -42,13 +40,11 @@ namespace pf
 			auto curr_it = *m_openList.begin();
 			currentPos = curr_it.pos;
 
-			// If the current position is the target position, we can start building the path
 			if (currentPos == m_targetPos)
 			{
 				break;
 			}
 
-			// Remove the found node from the open list and then add it to the closed list
 			m_openList.erase(curr_it);
 			m_closedList[convertTo1D(currentPos)] = true;
 
@@ -58,7 +54,6 @@ namespace pf
 				const auto neighborPos = currentPos + m_directions[i];
 				const auto neighborIndex = convertTo1D(neighborPos);
 
-				// If the node is not valid or can't be passed or the node is already found
 				if (!isValid(neighborPos) || isBlocked(neighborIndex) || m_closedList[neighborIndex] == true)
 				{
 					continue;
@@ -68,7 +63,6 @@ namespace pf
 				hNew = m_heuristic(neighborPos, m_targetPos, m_weight);
 				fNew = gNew + hNew;
 
-				// If the node is not in the open list or the new f value is better
 				if (m_cameFrom[neighborIndex].f == 0 || fNew < m_cameFrom[neighborIndex].f)
 				{
 					m_openList.insert(Node(neighborPos, fNew));
@@ -86,7 +80,6 @@ namespace pf
 		auto currentPos = m_targetPos;
 		auto currentIndex = convertTo1D(currentPos);
 
-		// Build the path 
 		while (!(m_cameFrom[currentIndex].parent == currentPos))
 		{
 			path.push_back(currentPos);

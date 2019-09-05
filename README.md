@@ -1,5 +1,5 @@
 # A* algorithm
-Fast implementation of the A* path-finding algorithm with C++ (C++14). 
+Implementation of the A* path-finding algorithm with C++ (C++14). 
 
 ## Usage example
 
