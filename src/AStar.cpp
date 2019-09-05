@@ -29,23 +29,22 @@ namespace pf
 		m_closedList.resize(m_size, false);
 
 		m_cameFrom[convertTo1D(m_startPos)].parent = m_startPos;
-		m_openList.insert(Node(m_startPos, 0));
+		m_openList.push(Node(m_startPos, 0));
 
 		uint fNew, gNew, hNew;
 		Vec2i currentPos;
 
 		while (!m_openList.empty())
 		{
-			// Find the node with the least f value
-			auto curr_it = *m_openList.begin();
-			currentPos = curr_it.pos;
+			// Get the node with the least f value
+			currentPos = m_openList.top().pos;
 
 			if (currentPos == m_targetPos)
 			{
 				break;
 			}
 
-			m_openList.erase(curr_it);
+			m_openList.pop();
 			m_closedList[convertTo1D(currentPos)] = true;
 
 			// Check the neighbors of the current node
@@ -65,7 +64,7 @@ namespace pf
 
 				if (m_cameFrom[neighborIndex].f == 0 || fNew < m_cameFrom[neighborIndex].f)
 				{
-					m_openList.insert(Node(neighborPos, fNew));
+					m_openList.push(Node(neighborPos, fNew));
 					m_cameFrom[neighborIndex] = { neighborPos, currentPos, fNew, gNew, hNew };
 				}
 			}

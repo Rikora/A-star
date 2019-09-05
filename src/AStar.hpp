@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include <queue>
 #include <vector>
 #include <functional>
 #include "Vec2i.hpp"
@@ -23,7 +23,7 @@ namespace pf
 		uint h;
 	};
 
-	// Required for std::set
+	// Reverse std::priority_queue to get the smallest element on top
 	inline bool operator< (const Node& a, const Node& b) { return a.f < b.f; }
 
 	class AStar
@@ -47,7 +47,7 @@ namespace pf
 		Vec2i m_dimensions;
 		Vec2i m_startPos;
 		Vec2i m_targetPos;
-		std::set<Node> m_openList;
+		std::priority_queue<Node> m_openList;
 		std::vector<bool> m_closedList;
 		std::vector<Node> m_cameFrom;
 		std::vector<int> m_grid;
